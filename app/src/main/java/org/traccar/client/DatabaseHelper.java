@@ -102,7 +102,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("latitude", position.getLatitude());
         values.put("longitude", position.getLongitude());
         values.put("altitude", position.getAltitude());
-        values.put("speed", position.getSpeed());
+        if(position.getSpeed()>3.0)  values.put("speed", (-1.0)*position.getSpeed());
+        else values.put("speed", position.getSpeed());
         values.put("course", position.getCourse());
         values.put("accuracy", position.getAccuracy());
         values.put("battery", position.getBattery());

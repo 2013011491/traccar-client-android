@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "org.traccar.client"
         buildConfigField "boolean", "HIDDEN_APP", "false"
-        minSdkVersion 15
+        minSdkVersion 22
         targetSdkVersion 28
         versionCode 55
         versionName '5.18'

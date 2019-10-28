@@ -16,7 +16,10 @@
 package org.traccar.client;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -120,6 +123,18 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
     // read -> send -> retry -> read -> send
     //
 
+    private boolean isCharge(){
+        Intent batteryIntent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        if (batteryIntent != null) {
+            // Are we charging or charged?
+            int status = batteryIntent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+            boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL;
+
+            return isCharging;
+        }
+        return false;
+    }
+
     private void log(String action, Position position) {
         if (position != null) {
             action += " (" +
@@ -138,7 +153,7 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
             @Override
             public void onComplete(boolean success, Void result) {
                 if (success) {
-                    if (isOnline && isWaiting) {
+                    if (isOnline && isWaiting && isCharge()) {
                         read();
                         isWaiting = false;
                     }
