@@ -1,0 +1,196 @@
+	<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>Daum 지도 시작하기</title>
+</head>
+<body>
+	<div id="map" style="width:1000px;height:700px;"></div>
+	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2ed6d7cf92e0863743791c626de0386b&libraries=services"></script>
+	<script>
+		var iternum = {{ iternum }};
+		var datalist = {{ datalist }};
+		var staypoint = {{ staypoint }};
+		var devicenum = {{ devicenum }};
+		var container = document.getElementById('map');
+		var options = {
+			center: new daum.maps.LatLng(datalist[0][0][1], datalist[0][0][2]),
+			level: 3
+		};
+
+		var map = new daum.maps.Map(container, options);
+
+		// 주소-좌표 변환 객체를 생성합니다
+		var geocoder = new daum.maps.services.Geocoder();
+
+		var callback = function(result, status) {
+			if (status === daum.maps.services.Status.OK) {
+				console.log('지번 주소 : ' + result[0].address.address_name);
+				console.log('도로명 주소 : ' + (result[0].road_address ? result[0].road_address.address_name : ' '));
+				console.log('건물 이름 : ' + (result[0].road_address ? result[0].road_address.building_name : ' '));
+			}
+		};
+		
+	
+		
+		// 마커 이미지의 이미지 주소입니다
+		var imageSrc = "http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
+		var imageSrc1= 'http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png';
+
+		//var iwContent = '<div style="padding:5px;">Hello World!</div>' // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다.
+			//iwRemoveable = true; // removeable 속성을 ture 로 설정하면 인포윈도우를 닫을 수 있는 x버튼이 표시됩니다
+			
+		for (var i = 0; i < datalist.length; i++) {
+			
+			// 마커 이미지의 이미지 크기 입니다
+			var imageSize = new daum.maps.Size(12, 17); 
+			var markerImage = new daum.maps.MarkerImage(imageSrc, imageSize); 
+			// 마커 이미지를 생성합니다 
+			var latlngs = new daum.maps.LatLng(datalist[i][1], datalist[i][2]);
+			// 마커를 생성합니다
+			var marker = new daum.maps.Marker({
+				map: map, // 마커를 표시할 지도
+				position: latlngs, // 마커를 표시할 위치
+			 // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+				image: markerImage, // 마커 이미지 
+				clickable: true
+			});
+			
+		}
+		//temp
+		/*for (var i = 0; i < 2; i++) {
+			
+			// 마커 이미지의 이미지 크기 입니다
+			var imageSize = new daum.maps.Size(12, 17); 
+			var markerImage = new daum.maps.MarkerImage(imageSrc, imageSize); 
+			// 마커 이미지를 생성합니다 
+			var latlngs = new daum.maps.LatLng(datalist[0][i][1], datalist[0][i][2]);
+			// 마커를 생성합니다
+			var marker = new daum.maps.Marker({
+				map: map, // 마커를 표시할 지도
+				position: latlngs, // 마커를 표시할 위치
+			 // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+				image: markerImage, // 마커 이미지 
+				clickable: true
+			});
+		}*/
+
+		/*for (var i = 0; i < datalist[1].length; i++) {
+		
+		// 마커 이미지의 이미지 크기 입니다
+		var imageSize = new daum.maps.Size(12, 17); 
+		
+		// 마커 이미지를 생성합니다 
+		var markerImage = new daum.maps.MarkerImage(imageSrc1, imageSize);
+		var latlngs = new daum.maps.LatLng(datalist[1][i][1], datalist[1][i][2]);
+		// 마커를 생성합니다
+		var marker = new daum.maps.Marker({
+			map: map, // 마커를 표시할 지도
+			position: latlngs, // 마커를 표시할 위치
+			// 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+			image: markerImage, // 마커 이미지 
+			clickable: true
+		});
+		//geocoder.coord2Address(latlngs.getLng(),latlngs.getLat(), callback);
+			
+			//인포윈도우 생성
+			/*var infowindow = new daum.maps.InfoWindow({
+				content : iwContent
+			});
+			// 마커에 클릭이벤트 등록	
+			// 마커에 mouseover 이벤트와 mouseout 이벤트를 등록합니다
+			// 이벤트 리스너로는 클로저를 만들어 등록합니다 
+			// for문에서 클로저를 만들어 주지 않으면 마지막 마커에만 이벤트가 등록됩니다
+			daum.maps.event.addListener(marker, 'mouseover', makeOverListener(map, marker, infowindow));
+			daum.maps.event.addListener(marker, 'mouseout', makeOutListener(infowindow));
+		}
+
+		for (var i = 0; i < devicenum; i ++) {
+			 
+			
+			// 마커 이미지를 생성합니다
+			for(var j=0; j<staypoint[i].length; j++){
+				// 마커 이미지의 이미지 크기 입니다
+				var imageSize = new daum.maps.Size(45, 55);
+				if(staypoint[i][j][4]==3) var markerImage = new daum.maps.MarkerImage(imageSrc, imageSize); 
+				else var markerImage = new daum.maps.MarkerImage(imageSrc1, imageSize);
+				var latlngs = new daum.maps.LatLng(staypoint[i][j][0], staypoint[i][j][1]);
+				// 마커를 생성합니다
+				var marker = new daum.maps.Marker({
+					map: map, // 마커를 표시할 지도
+					position: latlngs, // 마커를 표시할 위치
+				// 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+					image: markerImage, // 마커 이미지 
+					clickable: true
+				});
+				// 지도에 표시할 원을 생성합니다
+				var circle = new daum.maps.Circle({
+					center : latlngs,  // 원의 중심좌표 입니다 
+					radius: 10, // 미터 단위의 원의 반지름입니다 
+					strokeWeight: 5, // 선의 두께입니다 
+					strokeColor: '#75B8FA', // 선의 색깔입니다
+					strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+					strokeStyle: 'dashed', // 선의 스타일 입니다
+					fillColor: '#CFE7FF', // 채우기 색깔입니다
+					fillOpacity: 0.2  // 채우기 불투명도 입니다   
+				}); 
+				geocoder.coord2Address(latlngs.getLng(),latlngs.getLat(), callback);
+				// 지도에 원을 표시합니다 
+				circle.setMap(map); 
+			} 
+		}
+		//line making
+		/*var linePath1 = [
+			new daum.maps.LatLng(datalist[0][0][1], datalist[0][0][2])
+		];
+		var linePath2 = [
+			new daum.maps.LatLng(datalist[1][0][1], datalist[1][0][2])
+		];
+		for(var k=1; k<datalist[0].length; k++)
+		{
+			linePath1.push(new daum.maps.LatLng(datalist[0][k][1],datalist[0][k][2]))
+		}
+
+		for(var k=1; k<datalist[1].length; k++)
+		{
+			linePath2.push(new daum.maps.LatLng(datalist[1][k][1],datalist[1][k][2]))
+		}
+
+		// 지도에 표시할 선을 생성합니다
+		var polyline1 = new daum.maps.Polyline({
+			path: linePath1, // 선을 구성하는 좌표배열 입니다
+			strokeWeight: 1, // 선의 두께 입니다
+			strokeColor: '#FFAE22', // 선의 색깔입니다
+			strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+			strokeStyle: 'solid' // 선의 스타일입니다
+		});
+
+		// 지도에 선을 표시합니다 
+		polyline1.setMap(map);
+
+		var polyline2 = new daum.maps.Polyline({
+			path: linePath2, // 선을 구성하는 좌표배열 입니다
+			strokeWeight: 1, // 선의 두께 입니다
+			strokeColor: '#FFAE00', // 선의 색깔입니다
+			strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+			strokeStyle: 'solid' // 선의 스타일입니다
+		});
+
+		// 지도에 선을 표시합니다 
+		polyline2.setMap(map);
+		// 인포윈도우를 표시하는 클로저를 만드는 함수입니다 
+		function makeOverListener(map, marker, infowindow) {
+			return function() {
+				infowindow.open(map, marker);
+			};
+		}*/
+
+		// 인포윈도우를 닫는 클로저를 만드는 함수입니다 
+		function makeOutListener(infowindow) {
+			return function() {
+				infowindow.close();
+			};
+		}
+	</script>
+</body>
+</html>

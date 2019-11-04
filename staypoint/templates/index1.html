@@ -1,0 +1,61 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+    function apiSample(){
+        $("#index3").html("");
+        $.ajax({
+            type: "GET",
+            url: "http://map.ngii.go.kr/openapi/search.json",
+            data: {
+                target:"poi",
+                apikey:"iRZU9B0q0cc-Sli4OUVssw",
+                onePageRows:"10",
+                currentPage:"2",
+                keyword:"한양"
+            },
+            dataType : "jsonp",
+            crossDomain:true,
+            success: function(result) {
+                var search = result.search;
+                var header = search.header;
+                var responseCode = header.responseCode;
+                var responseMessage = header.responseMessage;
+    
+                if(responseCode!="0"&&responseCode!="100"){
+                    $("#index3").html(responseMessage);
+                }else{
+                    var htmlStr = "";
+                    var poiArry = search.contents.poi;
+                    if(poiArry.length==0){
+                        $("#index3").html("검색결과가 없습니다.");
+                    }else{
+                        htmlStr+="<table>";
+                        for(var i=0;i<poiArry.length;i++){
+                            htmlStr+="<tr>";
+                            htmlStr+="<td>"+poiArry[i].name+"</td>";
+                            htmlStr+="<td>"+poiArry[i].roadAdres+"</td>";
+                            htmlStr+="<td>"+poiArry[i].jibunAdres+"</td>";
+                            htmlStr+="<td>"+poiArry[i].zip+"</td>";
+                            htmlStr+="<td>"+poiArry[i].x+"</td>";
+                            htmlStr+="<td>"+poiArry[i].y+"</td>";
+                            htmlStr+="<td>"+poiArry[i].typeCode+"</td>";
+                            htmlStr+="<td>"+poiArry[i].typeName+"</td>";
+                            htmlStr+="</tr>";
+                        }
+                        htmlStr+="</table>";
+                        $("#index3").html(htmlStr);
+                    }
+                }
+              },
+            error : function(xhr, ajaxSettings, thrownError){
+            }
+        });
+    }
+    </script>
+    
+    <body>  
+    <a href="javascript:apiSample()">검색 API</a>
+    <div id="index3">
+    </div>
+    </body>
+    
